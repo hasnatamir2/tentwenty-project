@@ -100,23 +100,6 @@ const Navbar = () => {
                                                 </Link>
                                             </motion.div>
                                         ))}
-                                        <motion.div
-                                            variants={mobileLinkVariants}
-                                        >
-                                            <Link
-                                                href='#'
-                                                className='mt-4 px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors flex items-center'
-                                            >
-                                                Contact us
-                                                <Image
-                                                    src={ArrowRight}
-                                                    alt='arrow-right'
-                                                    className=' ml-2'
-                                                    width={16}
-                                                    height={16}
-                                                />
-                                            </Link>
-                                        </motion.div>
                                     </div>
                                 </motion.div>
                             )}

@@ -37,7 +37,7 @@ const testimonials = [
     },
 ];
 
-const FloraSlider = () => {
+const DraggableSlider = () => {
     const [position, setPosition] = useState(0);
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
@@ -72,20 +72,6 @@ const FloraSlider = () => {
         setCursorPosition({ x: e.clientX, y: e.clientY });
     };
 
-    const textItemVariants = {
-        hidden: { opacity: 0, y: 40 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.4 },
-        },
-        exit: {
-            opacity: 0,
-            y: 40,
-            transition: { duration: 0.3 },
-        },
-    };
-
     const textContainerVariants = {
         hidden: { opacity: 1 },
         visible: {
@@ -106,7 +92,7 @@ const FloraSlider = () => {
 
     return (
         <div
-            className='flex flex-col items-center justify-center h-screen overflow-hidden'
+            className='flex flex-col items-center justify-center h-screen overflow-hidden md:mb-28'
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
@@ -179,26 +165,24 @@ const FloraSlider = () => {
                         <motion.div
                             key={position}
                             variants={textContainerVariants}
-                            initial='hidden'
-                            animate='visible'
-                            exit='exit'
+                            initial={{ opacity: 0, y: 34 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -34 }}
+                            transition={{ duration: 0.55, ease: "easeOut" }}
                             className='text-center w-full absolute'
                         >
                             <motion.p
-                                variants={textItemVariants}
-                                className='text-gray-500 mb-2 text-sm md:text-base'
+                                className='text-[#7A7777] mb-2 text-sm md:text-base'
                             >
                                 {testimonials[position].quote}
                             </motion.p>
                             <motion.h3
-                                variants={textItemVariants}
-                                className='text-xl md:text-2xl font-bold text-gray-800'
+                                className='text-xl md:text-4xl'
                             >
                                 {testimonials[position].name}
                             </motion.h3>
                             <motion.p
-                                variants={textItemVariants}
-                                className='text-gray-600 text-sm md:text-base'
+                                className='text-[#7A7777] text-sm md:text-2xl font-base'
                             >
                                 {testimonials[position].title}
                             </motion.p>
@@ -210,4 +194,4 @@ const FloraSlider = () => {
     );
 };
 
-export default FloraSlider;
+export default DraggableSlider;

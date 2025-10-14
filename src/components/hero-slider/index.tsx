@@ -1,30 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
+import { motion, useAnimation } from "framer-motion";
+import { HeroSlides } from "@/lib/data";
 
 gsap.registerPlugin(useGSAP);
-
-const slides = [
-    {
-        image: "/images/image1.png",
-        heading: "From Our Farms",
-        subheading: "To Your Hands",
-    },
-    {
-        image: "/images/image5.png",
-        heading: "Sustainably Grown",
-        subheading: "With Care and Passion",
-    },
-    {
-        image: "/images/image4.png",
-        heading: "Fresh. Local. Natural.",
-        subheading: "Quality You Can Taste",
-    },
-];
 
 const SLICE_COUNT = 2;
 
@@ -34,6 +17,7 @@ export default function HeroSlider() {
     const containerRef = useRef<HTMLDivElement>(null);
     const nextTimeout = useRef<NodeJS.Timeout | null>(null);
     const tlRef = useRef<gsap.core.Timeline | null>(null);
+    const controls = useAnimation();
 
     function preloadImage(src: string) {
         return new Promise<void>((resolve) => {
@@ -49,19 +33,45 @@ export default function HeroSlider() {
     useEffect(() => {
         nextTimeout.current = setInterval(() => {
             setPrevIndex(index);
-            setIndex((prev) => (prev + 1) % slides.length);
+            setIndex((prev) => (prev + 1) % HeroSlides.length);
         }, 6000);
 
+        // Reset animation
+        controls.set({
+            width: 0,
+            height: 0,
+        });
+
+        // Animate borders sequentially
+        const run = async () => {
+            await controls.start({
+                width: "100%",
+                transition: { duration: 1.5, ease: "linear" },
+            });
+            await controls.start({
+                height: "100%",
+                transition: { duration: 1.5, ease: "linear" },
+            });
+            await controls.start({
+                width: "100%",
+                transition: { duration: 1.5, ease: "linear" },
+            });
+            await controls.start({
+                height: "100%",
+                transition: { duration: 1.5, ease: "linear" },
+            });
+        };
+        run();
         return () => {
             if (nextTimeout.current) clearInterval(nextTimeout.current);
         };
-    }, [index]);
+    }, [controls, index]);
 
     useEffect(() => {
         let cancelled = false;
 
         async function run() {
-            const curr = slides[index];
+            const curr = HeroSlides[index];
             const el = containerRef.current;
             if (!el) return;
 
@@ -154,8 +164,8 @@ export default function HeroSlider() {
         // run whenever index changes
     }, [index, prevIndex]);
 
-    const currentSlide = slides[index];
-    const prevSlide = prevIndex !== null ? slides[prevIndex] : null;
+    const currentSlide = HeroSlides[index];
+    const prevSlide = prevIndex !== null ? HeroSlides[prevIndex] : null;
 
     return (
         <div
@@ -217,60 +227,108 @@ export default function HeroSlider() {
 
             {/* text content */}
             <div className='relative z-[5] flex flex-col items-start justify-center h-full px-8 md:px-16'>
-                <AnimatePresence mode='wait'>
-                    <motion.div
-                        key={currentSlide.heading}
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -24 }}
-                        transition={{ duration: 0.85, ease: "easeOut" }}
-                        className='text-white max-w-3xl'
-                    >
-                        <p className='text-sm md:text-lg uppercase tracking-wider mb-2 font-light'>
-                            Welcome To TenTwenty Farms
-                        </p>
-                        <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold leading-tight font-sans'>
-                            {currentSlide.heading}
-                            <br />
-                            {currentSlide.subheading}
-                        </h1>
-                    </motion.div>
-                </AnimatePresence>
+                <div className='text-white'>
+                    <p className='text-sm md:text-base capitalize mb-2'>
+                        Welcome To TenTwenty
+                    </p>
+                    <h1 className='text-[46px] md:text-6xl font-normal leading-tight font-sans'>
+                        Tentwenty
+                    </h1>
+                </div>
 
                 {/* Thumbnail indicators with circular timer */}
-                <div className='absolute bottom-10 left-8 z-[6]'>
-                    {slides.length > 1 && (
+                <div className='absolute bottom-10 left-8 z-[6] flex items-center space-x-4'>
+                    {HeroSlides.length > 1 && (
                         <button
                             onClick={() => {
                                 if (nextTimeout.current)
                                     clearInterval(nextTimeout.current);
                                 setPrevIndex(index);
-                                setIndex((index + 1) % slides.length);
+                                setIndex((index + 1) % HeroSlides.length);
                             }}
-                            className='group relative w-[138px] h-[138px] overflow-hidden hover:scale-105 transition-transform duration-300'
+                            className='group relative md:w-[138px] md:h-[138px] h-[115px] w-[115px] overflow-hidden'
                         >
                             {/* Next slide thumbnail */}
-                            
-                                <Image
-                                    width={93}
-                                    height={93}
-                                    src={
-                                        slides[(index + 1) % slides.length]
-                                            .image
-                                    }
-                                    alt='Next slide'
-                                    className='w-[93px] h-[93px] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
-                                />
+
+                            <Image
+                                width={93}
+                                height={93}
+                                src={
+                                    HeroSlides[(index + 1) % HeroSlides.length]
+                                        .image
+                                }
+                                alt='Next slide'
+                                className='md:w-[93px] md:h-[93px] w-[77.5px] h-[77.5px] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+                            />
+
+                            <div className='absolute inset-0 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 cursor-pointer'>
+                                <span className='text-white text-sm md:text-base'>
+                                    Next
+                                </span>
+                            </div>
 
                             {/* Animated border timer */}
                             <div className='absolute inset-0'>
-                                <span className='absolute top-0 left-0 w-0 h-2 bg-white animate-border-timer'></span>
-                                <span className='absolute top-0 right-0 w-2 h-0 bg-white animate-border-timer-delay'></span>
-                                <span className='absolute bottom-0 right-0 w-0 h-2 bg-white animate-border-timer-delay2'></span>
-                                <span className='absolute bottom-0 left-0 w-2 h-0 bg-white animate-border-timer-delay3'></span>
+                                <motion.span
+                                    className='absolute top-0 left-0 h-2 w-0 bg-white'
+                                    key={`top-${index}`}
+                                    animate={{ width: "100%" }}
+                                    transition={{
+                                        duration: 1.5,
+                                        ease: "linear",
+                                    }}
+                                />
+                                <motion.span
+                                    className='absolute top-0 right-0 w-2 h-0 bg-white'
+                                    key={`right-${index}`}
+                                    animate={{ height: "100%" }}
+                                    transition={{
+                                        duration: 1.5,
+                                        ease: "linear",
+                                        delay: 1.5,
+                                    }}
+                                />
+                                <motion.span
+                                    className='absolute bottom-0 right-0 h-2 w-0 bg-white'
+                                    key={`bottom-${index}`}
+                                    animate={{ width: "100%" }}
+                                    transition={{
+                                        duration: 1.5,
+                                        ease: "linear",
+                                        delay: 3,
+                                    }}
+                                />
+                                <motion.span
+                                    className='absolute bottom-0 left-0 w-2 h-0 bg-white'
+                                    key={`left-${index}`}
+                                    animate={{ height: "100%" }}
+                                    transition={{
+                                        duration: 1.5,
+                                        ease: "linear",
+                                        delay: 4.5,
+                                    }}
+                                />
                             </div>
                         </button>
                     )}
+                    <div className='flex items-center text-white font-mono text-lg md:text-xl space-x-2'>
+                        <motion.div
+                            key={index}
+                            initial={{ y: 20, opacity: 0 }} // enters from bottom
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -20, opacity: 0 }} // exits to top
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className='font-bold'
+                        >
+                            {String(index + 1).padStart(2, "0")}
+                        </motion.div>
+
+                        <span className='mx-2'>-----</span>
+
+                        <span className='opacity-50'>
+                            {String(HeroSlides.length).padStart(2, "0")}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
