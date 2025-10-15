@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import { motion, useAnimation } from "framer-motion";
 import { HeroSlides } from "@/lib/data";
+import LineSvg from "../../../public/icons/line.svg";
 
 gsap.registerPlugin(useGSAP);
 
@@ -323,7 +324,13 @@ export default function HeroSlider() {
                             {String(index + 1).padStart(2, "0")}
                         </motion.div>
 
-                        <span className='mx-2'>-----</span>
+                        <Image
+                            src={LineSvg}
+                            alt='line'
+                            className='h-1 mx-2'
+                            width={100}
+                            height={1}
+                        />
 
                         <span className='opacity-50'>
                             {String(HeroSlides.length).padStart(2, "0")}
